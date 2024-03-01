@@ -1,0 +1,14 @@
+# Archivos generados automáticamente
+*.pyc
+__pycache__/
+
+# Archivos de configuración local
+*.sqlite
+*.ini
+
+# Directorios de entornos virtuales (si usas venv, virtualenv, etc.)
+venv/
+env/
+virtualenv/
+
+.idea/

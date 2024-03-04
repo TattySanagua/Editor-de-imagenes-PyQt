@@ -166,28 +166,103 @@ class Editor(QMainWindow):
         self.setCentralWidget(self.lbl_imagen)
 
     def abrir_imagen(self):
-        pass
+        imagen, _ = QFileDialog.getOpenFileName(self, "Abrir imagen", "",
+                                                "jpg (*.jpeg *.jpg);; PNG (*.png);; GIF (*.gif)")
+
+        if imagen:
+            self.imagen = QPixmap(imagen)
+            #Escalar la imagen
+            self.lbl_imagen.setPixmap(self.imagen.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+        else:
+            QMessageBox.information(self, "Error", "No se pudo abrir la imagen", QMessageBox.Ok)
+
     def guardar_imagen(self):
-        pass
+        nombre_archivo, _ = QFileDialog.getSaveFileName(self, "Abrir imagen", "",
+                                                "jpg (*.jpeg *.jpg);; PNG (*.png);; GIF (*.gif)")
+
+        if nombre_archivo and self.imagen.isNull() == False:
+            self.imagen.save(nombre_archivo)
+        else:
+            QMessageBox.information(self, "Error", "No se pudo guardar la imagen", QMessageBox.Ok)
 
     def imprimir_imagen(self):
-        pass
+        printer = QPrinter()
+        printer.setOutputFormat(QPrinter.NativeFormat)
+
+        print_dialog = QPrintDialog(printer)
+
+        if (print_dialog.exec_()) == QPrintDialog.Accepted:
+            painter = QPainter()
+            painter.begin(printer)
+
+            rect = QRect(painter.viewport())
+
+            size = QSize(self.lbl_imagen.pixmap().size())
+            size.scaled(rect.size(), Qt.KeepAspectRatio)
+
+            painter.setViewport(rect.x(), rect.y(), size.width(), size.height())
+            painter.setWindow(self.lbl_imagen.pixmap().rect())
+
+            painter.drawPixmap(0, 0, self.lbl_imagen.pixmap())
+            painter.end()
 
     def rotar_90(self):
-        pass
+        if self.imagen.isNull() == False:
+            transformacion = QTransform().rotate(90)
+            pixmap = QPixmap(self.imagen)
+
+            rotado = pixmap.transformed(transformacion)
+            self.lbl_imagen.setPixmap(rotado.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.imagen = QPixmap(rotado)
+
+            self.lbl_imagen.update()
 
     def rotar_180(self):
-        pass
+        if self.imagen.isNull() == False:
+            transformacion = QTransform().rotate(180)
+            pixmap = QPixmap(self.imagen)
+
+            rotado = pixmap.transformed(transformacion)
+            self.lbl_imagen.setPixmap(rotado.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.imagen = QPixmap(rotado)
+
+            self.lbl_imagen.update()
 
     def rotar_horiz(self):
-        pass
+        if self.imagen.isNull() == False:
+            transformacion = QTransform().scale(-1,1)
+            pixmap = QPixmap(self.imagen)
+
+            rotado = pixmap.transformed(transformacion)
+            self.lbl_imagen.setPixmap(rotado.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.imagen = QPixmap(rotado)
+
+            self.lbl_imagen.update()
 
     def rotar_vertical(self):
-        pass
+        if self.imagen.isNull() == False:
+            transformacion = QTransform().scale(1, -1)
+            pixmap = QPixmap(self.imagen)
+
+            rotado = pixmap.transformed(transformacion)
+            self.lbl_imagen.setPixmap(
+                rotado.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.imagen = QPixmap(rotado)
+
+            self.lbl_imagen.update()
     def redimensionar(self):
-        pass
+        if self.imagen.isNull() == False:
+            transformacion = QTransform().scale(.5,.5)
+            pixmap = QPixmap(self.imagen)
+
+            rotado = pixmap.transformed(transformacion)
+            self.lbl_imagen.setPixmap(self.imagen.scaled(self.lbl_imagen.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            self.imagen = QPixmap(rotado)
+
+            self.lbl_imagen.update()
     def limpiar_imagen(self):
-        pass
+        self.lbl_imagen.clear()
+        self.imagen = QPixmap()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
